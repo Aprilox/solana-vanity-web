@@ -91,9 +91,9 @@ input:focus, select:focus {
 
 input:disabled {
     background: var(--input-disabled) !important;
-    color: #FFFFFF !important;
+    color: #afafaf !important;
     opacity: 1;
-    border-color: #555555;
+    border-color: #8d0000;
     cursor: not-allowed;
 }
 
@@ -228,28 +228,28 @@ button.danger:hover {
 
 .copy-row {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    flex-wrap: wrap;
+    justify-content: center;     /* ← CENTRÉ */
+    margin-top: 12px;
 }
 
 .copy-btn {
     background: transparent;
     color: var(--solana-green);
-    border: 1px solid var(--solana-green);
-    padding: 8px 16px;
-    border-radius: 8px;
+    border: 1.5px solid var(--solana-green); /* ← Bordure plus visible */
+    padding: 10px 24px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    flex: 1;
-    min-width: 80px;
     transition: all 0.2s ease;
+    width: auto;
+    min-width: 120px;
 }
 
 .copy-btn:hover {
     background: var(--solana-green);
     color: #000;
+    transform: translateY(-1px);
 }
 
 .settings {
@@ -261,6 +261,27 @@ button.danger:hover {
     align-items: center;
     gap: 10px;
     margin: 12px 0;
+}
+
+.loading-line {
+    color: #4FC3F7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-style: italic;
+}
+
+.spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #4FC3F7;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 @media (max-width: 500px) {

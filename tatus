@@ -1,0 +1,397 @@
+[1mdiff --git a/app.js b/app.js[m
+[1mindex f113d24..9d411ac 100644[m
+[1m--- a/app.js[m
+[1m+++ b/app.js[m
+[36m@@ -1,5 +1,3 @@[m
+[31m-const { Keypair } = solanaWeb3;[m
+[31m-[m
+ const vanityInput = document.getElementById('vanity');[m
+ const startBtn = document.getElementById('startBtn');[m
+ const consoleEl = document.getElementById('console');[m
+[36m@@ -73,7 +71,7 @@[m [mdocument.querySelectorAll('.copy-btn').forEach(btn => {[m
+ downloadBtn.addEventListener('click', () => {[m
+     if (!foundKeypair) return;[m
+     const json = JSON.stringify(Array.from(foundKeypair.secretKey));[m
+[31m-    downloadFile(json, `wallet-${foundKeypair.publicKey.toBase58().slice(0,8)}.json`);[m
+[32m+[m[32m    downloadFile(json, `wallet-${foundKeypair.publicKey.toBase58().slice(0, 8)}.json`);[m
+ });[m
+ [m
+ downloadBackupBtn.addEventListener('click', () => {[m
+[36m@@ -87,7 +85,7 @@[m [mdownloadBackupBtn.addEventListener('click', () => {[m
+     };[m
+     const secretKeyOneLine = backup.secretKey.join(',');[m
+     const backupOneLine = { ...backup, secretKey: `[${secretKeyOneLine}]` };[m
+[31m-    downloadFile(JSON.stringify(backupOneLine, null, 2), `vanity-backup-${backup.address.slice(0,8)}.json`);[m
+[32m+[m[32m    downloadFile(JSON.stringify(backupOneLine, null, 2), `vanity-backup-${backup.address.slice(0, 8)}.json`);[m
+ });[m
+ [m
+ function downloadFile(content, filename) {[m
+[36m@@ -117,25 +115,26 @@[m [mfunction startGeneration() {[m
+     results.style.display = 'none';[m
+ [m
+     consoleEl.innerHTML = `[m
+[31m-        <div class="console-line">Démarrage de la génération...</div>[m
+[31m-        <div class="console-line" data-type="prefix">Préfixe: ${vanity}</div>[m
+[31m-        <div class="console-line thread-line" id="threadLine"></div>[m
+[32m+[m[32m    <div class="console-line">Démarrage de la génération...</div>[m
+[32m+[m[32m    <div class="console-line" data-type="prefix">Préfixe: ${vanity}</div>[m
+[32m+[m[32m    <div class="console-line thread-line" id="threadLine"></div>[m
+[32m+[m[32m    <div class="console-line loading-line" id="loadingLine">[m
+[32m+[m[32m        <span class="spinner"></span> Chargement du moteur WASM...[m
+[32m+[m[32m    </div>[m
+     `;[m
+     threadLine = document.getElementById('threadLine');[m
+ [m
+     adjustWorkers(parseInt(threadSelect.value));[m
+     updateThreadsLine();[m
+[31m-[m
+[31m-    setInterval(updateStats, 500);[m
+[32m+[m[32m    setInterval(updateStats, 250); // update statistique[m
+ }[m
+[31m-[m
+ function adjustWorkers(targetCount) {[m
+     const current = workers.length;[m
+     if (current === targetCount) return;[m
+ [m
+     if (current < targetCount) {[m
+         for (let i = current; i < targetCount; i++) {[m
+[31m-            const worker = new Worker('worker.js');[m
+[32m+[m[32m            const worker = new Worker('worker.js?t=' + Date.now(), { type: 'module' });[m
+             worker.postMessage({ vanity: vanityInput.value.trim() });[m
+             workers.push(worker);[m
+             worker.onmessage = handleWorkerMessage;[m
+[36m@@ -148,23 +147,40 @@[m [mfunction adjustWorkers(targetCount) {[m
+ }[m
+ [m
+ function handleWorkerMessage(e) {[m
+[32m+[m[32m    if (e.data.ready) {[m
+[32m+[m[32m        // WASM chargé, mais pas encore de batch → on garde la roue[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (e.data.error) {[m
+[32m+[m[32m        logConsole('ERREUR: ' + e.data.error, 'found-line');[m
+[32m+[m[32m        stopGeneration();[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+     if (e.data.found) {[m
+         lastMessageData = e.data;[m
+         foundKeypair = { [m
+             secretKey: new Uint8Array(e.data.secretKeyArray),[m
+             publicKey: { toBase58: () => e.data.pubkey }[m
+         };[m
+[32m+[m[32m        totalAttempts += e.data.delta || BATCH;[m
+         stopGeneration();[m
+         displayResult(e.data.pubkey, e.data.privkey);[m
+         logConsole(`TROUVÉ ! Adresse: ${e.data.pubkey}`, 'found-line');[m
+[31m-    } else if (e.data.attempts) {[m
+[31m-        totalAttempts += e.data.attempts;[m
+[32m+[m[32m    } else if (e.data.delta !== undefined) {[m
+[32m+[m[32m        totalAttempts += e.data.delta;[m
+     }[m
+ }[m
+ [m
+ function updateStats() {[m
+     if (!isRunning || !threadLine) return;[m
+ [m
+[32m+[m[32m    // N'AFFICHE RIEN TANT QUE totalAttempts === 0[m
+[32m+[m[32m    if (totalAttempts === 0) {[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+     const elapsed = (performance.now() - startTime) / 1000;[m
+     const speed = elapsed > 0 ? Math.round(totalAttempts / elapsed) : 0;[m
+     const eta = speed > 0 ? estimateTime(vanityInput.value.length, speed) : '∞';[m
+[36m@@ -181,6 +197,10 @@[m [mfunction updateStats() {[m
+     speedLine.textContent = `Vitesse: ${speed.toLocaleString()} clés/s | ETA: ~${eta}`;[m
+     threadLine.parentNode.insertBefore(speedLine, attempts.nextSibling);[m
+ [m
+[32m+[m[32m    // SUPPRIME LA ROUE DÈS LE PREMIER BATCH[m
+[32m+[m[32m    const loadingLine = document.getElementById('loadingLine');[m
+[32m+[m[32m    if (loadingLine) loadingLine.remove();[m
+[32m+[m
+     consoleEl.scrollTop = consoleEl.scrollHeight;[m
+ }[m
+ [m
+[36m@@ -189,25 +209,31 @@[m [mfunction estimateTime(len, speed) {[m
+     const possibilities = Math.pow(chars.length, len);[m
+     const seconds = possibilities / speed;[m
+     if (seconds < 60) return `${Math.round(seconds)}s`;[m
+[31m-    if (seconds < 3600) return `${(seconds/60).toFixed(1)} min`;[m
+[31m-    if (seconds < 86400) return `${(seconds/3600).toFixed(1)} h`;[m
+[31m-    return `${(seconds/86400).toFixed(1)} jours`;[m
+[32m+[m[32m    if (seconds < 3600) return `${(seconds / 60).toFixed(1)} min`;[m
+[32m+[m[32m    if (seconds < 86400) return `${(seconds / 3600).toFixed(1)} h`;[m
+[32m+[m[32m    return `${(seconds / 86400).toFixed(1)} jours`;[m
+ }[m
+ [m
+ function stopGeneration() {[m
+     isRunning = false;[m
+     workers.forEach(w => w.terminate());[m
+     workers = [];[m
+[31m-    window.isGenerating = false;[m
+ [m
+[32m+[m[32m    window.isGenerating = false;[m
+     vanityInput.disabled = false;[m
+     vanityInput.style.background = '';[m
+     startBtn.textContent = 'Lancer la Recherche';[m
+     startBtn.classList.remove('danger');[m
+[32m+[m
+[32m+[m[32m    // SUPPRIME LA ROUE SI ENCORE LÀ[m
+[32m+[m[32m    const loadingLine = document.getElementById('loadingLine');[m
+[32m+[m[32m    if (loadingLine) {[m
+[32m+[m[32m        loadingLine.remove();[m
+[32m+[m[32m    }[m
+[32m+[m
+     updateThreadsLine();[m
+     logConsole('Arrêt de la génération.', 'normal');[m
+ }[m
+[31m-[m
+ function displayResult(pubkey, privkey) {[m
+     pubkeyEl.textContent = pubkey;[m
+     privkeyEl.textContent = privkey;[m
+[1mdiff --git a/assets/favicon.ico b/assets/favicon.ico[m
+[1mindex 5b4a62d..ce15697 100644[m
+Binary files a/assets/favicon.ico and b/assets/favicon.ico differ
+[1mdiff --git a/index.html b/index.html[m
+[1mindex 6d5b369..9960d3b 100644[m
+[1m--- a/index.html[m
+[1m+++ b/index.html[m
+[36m@@ -4,8 +4,41 @@[m
+ <head>[m
+     <meta charset="UTF-8">[m
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">[m
+[31m-    <title>Solana Vanity Generator</title>[m
+[31m-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">[m
+[32m+[m
+[32m+[m[32m    <!-- SEO -->[m
+[32m+[m[32m    <title>Solana Vanity Generator – En 1 clic</title>[m
+[32m+[m[32m    <meta name="description"[m
+[32m+[m[32m        content="Génère une adresse Solana vanity en 1 clic. 100% local, ultra-rapide, case-sensitive. Export Phantom. Gratuit, open-source.">[m
+[32m+[m[32m    <meta name="keywords" content="solana vanity, generateur adresse solana, vanity address, phantom export, web3">[m
+[32m+[m[32m    <meta name="author" content="Aprilox">[m
+[32m+[m[32m    <meta name="robots" content="index, follow">[m
+[32m+[m
+[32m+[m[32m    <!-- Open Graph / Social -->[m
+[32m+[m[32m    <meta property="og:title" content="Solana Vanity Generator – En 1 clic">[m
+[32m+[m[32m    <meta property="og:description" content="Adresse Solana personnalisée, 100% local, export Phantom.">[m
+[32m+[m[32m    <meta property="og:type" content="website">[m
+[32m+[m[32m    <meta property="og:url" content="https://vanity.aprilox.fr/">[m
+[32m+[m[32m    <meta property="og:image" content="https://vanity.aprilox.fr/assets/og-image.png">[m
+[32m+[m[32m    <meta property="og:site_name" content="Solana Vanity Generator">[m
+[32m+[m
+[32m+[m[32m    <!-- Twitter Card -->[m
+[32m+[m[32m    <meta name="twitter:card" content="summary_large_image">[m
+[32m+[m[32m    <meta name="twitter:title" content="Solana Vanity Generator - en 1 clic">[m
+[32m+[m[32m    <meta name="twitter:description" content="Génère ton adresse Solana personnalisée, 100% local.">[m
+[32m+[m[32m    <meta name="twitter:image" content="https://vanity.aprilox.fr/assets/og-image.png">[m
+[32m+[m
+[32m+[m[32m    <!-- Favicon moderne (PNG + SVG + ICO) -->[m
+[32m+[m[32m    <link rel="icon" type="image/png" href="/assets/favicon-96x96.png" sizes="96x96" />[m
+[32m+[m[32m    <link rel="icon" href="/assets/favicon.svg" /> <!-- SVG pour Chrome/Edge modernes -->[m
+[32m+[m[32m    <link rel="shortcut icon" href="/assets/favicon.ico" />[m
+[32m+[m[32m    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />[m
+[32m+[m[32m    <link rel="manifest" href="/assets/site.webmanifest" />[m
+[32m+[m[32m    <meta name="apple-mobile-web-app-title" content="Solana Vanity" />[m
+[32m+[m
+[32m+[m[32m    <!-- Canonical -->[m
+[32m+[m[32m    <link rel="canonical" href="https://vanity.aprilox.fr/">[m
+[32m+[m
+[32m+[m[32m    <!-- CSS -->[m
+     <link rel="stylesheet" href="style.css">[m
+     <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>[m
+ </head>[m
+[1mdiff --git a/style.css b/style.css[m
+[1mindex d00b6c6..64f4c46 100644[m
+[1m--- a/style.css[m
+[1m+++ b/style.css[m
+[36m@@ -91,9 +91,9 @@[m [minput:focus, select:focus {[m
+ [m
+ input:disabled {[m
+     background: var(--input-disabled) !important;[m
+[31m-    color: #FFFFFF !important;[m
+[32m+[m[32m    color: #afafaf !important;[m
+     opacity: 1;[m
+[31m-    border-color: #555555;[m
+[32m+[m[32m    border-color: #8d0000;[m
+     cursor: not-allowed;[m
+ }[m
+ [m
+[36m@@ -228,28 +228,28 @@[m [mbutton.danger:hover {[m
+ [m
+ .copy-row {[m
+     display: flex;[m
+[31m-    gap: 10px;[m
+[31m-    margin-top: 10px;[m
+[31m-    flex-wrap: wrap;[m
+[32m+[m[32m    justify-content: center;     /* ← CENTRÉ */[m
+[32m+[m[32m    margin-top: 12px;[m
+ }[m
+ [m
+ .copy-btn {[m
+     background: transparent;[m
+     color: var(--solana-green);[m
+[31m-    border: 1px solid var(--solana-green);[m
+[31m-    padding: 8px 16px;[m
+[31m-    border-radius: 8px;[m
+[32m+[m[32m    border: 1.5px solid var(--solana-green); /* ← Bordure plus visible */[m
+[32m+[m[32m    padding: 10px 24px;[m
+[32m+[m[32m    border-radius: 12px;[m
+     cursor: pointer;[m
+[31m-    font-size: 0.9rem;[m
+[32m+[m[32m    font-size: 0.95rem;[m
+     font-weight: 600;[m
+[31m-    flex: 1;[m
+[31m-    min-width: 80px;[m
+     transition: all 0.2s ease;[m
+[32m+[m[32m    width: auto;[m
+[32m+[m[32m    min-width: 120px;[m
+ }[m
+ [m
+ .copy-btn:hover {[m
+     background: var(--solana-green);[m
+     color: #000;[m
+[32m+[m[32m    transform: translateY(-1px);[m
+ }[m
+ [m
+ .settings {[m
+[36m@@ -263,6 +263,27 @@[m [mbutton.danger:hover {[m
+     margin: 12px 0;[m
+ }[m
+ [m
+[32m+[m[32m.loading-line {[m
+[32m+[m[32m    color: #4FC3F7;[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    gap: 8px;[m
+[32m+[m[32m    font-style: italic;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.spinner {[m
+[32m+[m[32m    width: 14px;[m
+[32m+[m[32m    height: 14px;[m
+[32m+[m[32m    border: 2px solid #4FC3F7;[m
+[32m+[m[32m    border-top: 2px solid transparent;[m
+[32m+[m[32m    border-radius: 50%;[m
+[32m+[m[32m    animation: spin 1s linear infinite;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@keyframes spin {[m
+[32m+[m[32m    to { transform: rotate(360deg); }[m
+[32m+[m[32m}[m
+[32m+[m
+ @media (max-width: 500px) {[m
+     body { padding: 16px; }[m
+     h1 { font-size: 1.8rem; }[m
+[1mdiff --git a/worker.js b/worker.js[m
+[1mindex 7f8f6ac..b8e5a1d 100644[m
+[1m--- a/worker.js[m
+[1m+++ b/worker.js[m
+[36m@@ -1,58 +1,50 @@[m
+[31m-importScripts('https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js');[m
+[31m-[m
+[31m-const { Keypair } = solanaWeb3;[m
+[31m-[m
+[31m-const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';[m
+[31m-[m
+[31m-function base58Encode(bytes) {[m
+[31m-  if (bytes.length === 0) return '';[m
+[31m-  const digits = [0];[m
+[31m-  for (let i = 0; i < bytes.length; ++i) {[m
+[31m-    let carry = bytes[i];[m
+[31m-    for (let j = 0; j < digits.length; ++j) {[m
+[31m-      carry += digits[j] << 8;[m
+[31m-      digits[j] = carry % 58;[m
+[31m-      carry = Math.floor(carry / 58);[m
+[32m+[m[32m// worker.js — ROUE JUSQU'À PREMIER BATCH[m
+[32m+[m[32mimport init, { VanityWorker } from '/assets/vanity_wasm.js';[m
+[32m+[m
+[32m+[m[32mlet worker = null;[m
+[32m+[m[32mlet pending = 0;[m
+[32m+[m[32mlet last = 0;[m
+[32m+[m[32mconst BATCH = 1000;[m
+[32m+[m
+[32m+[m[32mself.onmessage = async (e) => {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m        await init({ wasm: '/assets/vanity_wasm_bg.wasm' });[m
+[32m+[m[32m        worker = new VanityWorker(e.data.vanity);[m
+[32m+[m
+[32m+[m[32m        // SIGNAL IMMÉDIAT[m
+[32m+[m[32m        self.postMessage({ ready: true });[m
+[32m+[m
+[32m+[m[32m        pending = 0;[m
+[32m+[m[32m        last = performance.now();[m
+[32m+[m[32m        loop();[m
+[32m+[m[32m    } catch (err) {[m
+[32m+[m[32m        self.postMessage({ error: err.message });[m
+     }[m
+[31m-    while (carry > 0) {[m
+[31m-      digits.push(carry % 58);[m
+[31m-      carry = Math.floor(carry / 58);[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mfunction loop() {[m
+[32m+[m[32m    if (!worker) return;[m
+[32m+[m
+[32m+[m[32m    const res = worker.search(BATCH);[m
+[32m+[m
+[32m+[m[32m    if (res.found) {[m
+[32m+[m[32m        self.postMessage({[m
+[32m+[m[32m            found: true,[m
+[32m+[m[32m            pubkey: res.pubkey,[m
+[32m+[m[32m            privkey: res.privkey,[m
+[32m+[m[32m            secretKeyArray: res.secretKey,[m
+[32m+[m[32m            delta: pending + BATCH[m
+[32m+[m[32m        });[m
+[32m+[m[32m        return;[m
+     }[m
+[31m-  }[m
+[31m-  let string = '';[m
+[31m-  for (let k = digits.length - 1; k >= 0; k--) string += alphabet[digits[k]];[m
+[31m-  let leadingZeros = 0;[m
+[31m-  for (let l = 0; l < bytes.length; l++) { if (bytes[l] === 0) leadingZeros++; else break; }[m
+[31m-  return alphabet[0].repeat(leadingZeros) + string;[m
+[31m-}[m
+[31m-[m
+[31m-let vanity = '';[m
+[31m-let attempts = 0;[m
+[31m-const batchSize = 5000;[m
+[31m-[m
+[31m-function runBatch() {[m
+[31m-  for (let i = 0; i < batchSize; i++) {[m
+[31m-    const keypair = Keypair.generate();[m
+[31m-    const pubkey = keypair.publicKey.toBase58();[m
+[31m-    attempts++;[m
+[31m-[m
+[31m-    if (pubkey.startsWith(vanity)) {[m
+[31m-      self.postMessage({[m
+[31m-        found: true,[m
+[31m-        pubkey,[m
+[31m-        privkey: base58Encode(keypair.secretKey),[m
+[31m-        secretKeyArray: Array.from(keypair.secretKey)[m
+[31m-      });[m
+[31m-      return;[m
+[31m-    }[m
+[31m-  }[m
+ [m
+[31m-  self.postMessage({ attempts });[m
+[31m-  setTimeout(runBatch, 0);[m
+[31m-}[m
+[32m+[m[32m    pending += BATCH;[m
+[32m+[m[32m    const now = performance.now();[m
+[32m+[m[32m    if (now - last > 100 || pending > 500000) {[m
+[32m+[m[32m        self.postMessage({ delta: pending });[m
+[32m+[m[32m        pending = 0;[m
+[32m+[m[32m        last = now;[m
+[32m+[m[32m    }[m
+ [m
+[31m-self.onmessage = (e) => {[m
+[31m-  vanity = e.data.vanity;[m
+[31m-  attempts = 0;[m
+[31m-  runBatch();[m
+[31m-};[m
+\ No newline at end of file[m
+[32m+[m[32m    setTimeout(loop, 0);[m
+[32m+[m[32m}[m
+\ No newline at end of file[m

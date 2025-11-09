@@ -1,5 +1,3 @@
-const { Keypair } = solanaWeb3;
-
 const vanityInput = document.getElementById('vanity');
 const startBtn = document.getElementById('startBtn');
 const consoleEl = document.getElementById('console');
@@ -73,7 +71,7 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
 downloadBtn.addEventListener('click', () => {
     if (!foundKeypair) return;
     const json = JSON.stringify(Array.from(foundKeypair.secretKey));
-    downloadFile(json, `wallet-${foundKeypair.publicKey.toBase58().slice(0,8)}.json`);
+    downloadFile(json, `wallet-${foundKeypair.publicKey.toBase58().slice(0, 8)}.json`);
 });
 
 downloadBackupBtn.addEventListener('click', () => {
@@ -87,7 +85,7 @@ downloadBackupBtn.addEventListener('click', () => {
     };
     const secretKeyOneLine = backup.secretKey.join(',');
     const backupOneLine = { ...backup, secretKey: `[${secretKeyOneLine}]` };
-    downloadFile(JSON.stringify(backupOneLine, null, 2), `vanity-backup-${backup.address.slice(0,8)}.json`);
+    downloadFile(JSON.stringify(backupOneLine, null, 2), `vanity-backup-${backup.address.slice(0, 8)}.json`);
 });
 
 function downloadFile(content, filename) {
@@ -117,25 +115,26 @@ function startGeneration() {
     results.style.display = 'none';
 
     consoleEl.innerHTML = `
-        <div class="console-line">Démarrage de la génération...</div>
-        <div class="console-line" data-type="prefix">Préfixe: ${vanity}</div>
-        <div class="console-line thread-line" id="threadLine"></div>
+    <div class="console-line">Démarrage de la génération...</div>
+    <div class="console-line" data-type="prefix">Préfixe: ${vanity}</div>
+    <div class="console-line thread-line" id="threadLine"></div>
+    <div class="console-line loading-line" id="loadingLine">
+        <span class="spinner"></span> Chargement du moteur WASM...
+    </div>
     `;
     threadLine = document.getElementById('threadLine');
 
     adjustWorkers(parseInt(threadSelect.value));
     updateThreadsLine();
-
-    setInterval(updateStats, 500);
+    setInterval(updateStats, 250); // update statistique
 }
-
 function adjustWorkers(targetCount) {
     const current = workers.length;
     if (current === targetCount) return;
 
     if (current < targetCount) {
         for (let i = current; i < targetCount; i++) {
-            const worker = new Worker('worker.js');
+            const worker = new Worker('worker.js?t=' + Date.now(), { type: 'module' });
             worker.postMessage({ vanity: vanityInput.value.trim() });
             workers.push(worker);
             worker.onmessage = handleWorkerMessage;
@@ -148,22 +147,39 @@ function adjustWorkers(targetCount) {
 }
 
 function handleWorkerMessage(e) {
+    if (e.data.ready) {
+        // WASM chargé, mais pas encore de batch → on garde la roue
+        return;
+    }
+
+    if (e.data.error) {
+        logConsole('ERREUR: ' + e.data.error, 'found-line');
+        stopGeneration();
+        return;
+    }
+
     if (e.data.found) {
         lastMessageData = e.data;
         foundKeypair = { 
             secretKey: new Uint8Array(e.data.secretKeyArray),
             publicKey: { toBase58: () => e.data.pubkey }
         };
+        totalAttempts += e.data.delta || BATCH;
         stopGeneration();
         displayResult(e.data.pubkey, e.data.privkey);
         logConsole(`TROUVÉ ! Adresse: ${e.data.pubkey}`, 'found-line');
-    } else if (e.data.attempts) {
-        totalAttempts += e.data.attempts;
+    } else if (e.data.delta !== undefined) {
+        totalAttempts += e.data.delta;
     }
 }
 
 function updateStats() {
     if (!isRunning || !threadLine) return;
+
+    // N'AFFICHE RIEN TANT QUE totalAttempts === 0
+    if (totalAttempts === 0) {
+        return;
+    }
 
     const elapsed = (performance.now() - startTime) / 1000;
     const speed = elapsed > 0 ? Math.round(totalAttempts / elapsed) : 0;
@@ -181,6 +197,10 @@ function updateStats() {
     speedLine.textContent = `Vitesse: ${speed.toLocaleString()} clés/s | ETA: ~${eta}`;
     threadLine.parentNode.insertBefore(speedLine, attempts.nextSibling);
 
+    // SUPPRIME LA ROUE DÈS LE PREMIER BATCH
+    const loadingLine = document.getElementById('loadingLine');
+    if (loadingLine) loadingLine.remove();
+
     consoleEl.scrollTop = consoleEl.scrollHeight;
 }
 
@@ -189,25 +209,31 @@ function estimateTime(len, speed) {
     const possibilities = Math.pow(chars.length, len);
     const seconds = possibilities / speed;
     if (seconds < 60) return `${Math.round(seconds)}s`;
-    if (seconds < 3600) return `${(seconds/60).toFixed(1)} min`;
-    if (seconds < 86400) return `${(seconds/3600).toFixed(1)} h`;
-    return `${(seconds/86400).toFixed(1)} jours`;
+    if (seconds < 3600) return `${(seconds / 60).toFixed(1)} min`;
+    if (seconds < 86400) return `${(seconds / 3600).toFixed(1)} h`;
+    return `${(seconds / 86400).toFixed(1)} jours`;
 }
 
 function stopGeneration() {
     isRunning = false;
     workers.forEach(w => w.terminate());
     workers = [];
-    window.isGenerating = false;
 
+    window.isGenerating = false;
     vanityInput.disabled = false;
     vanityInput.style.background = '';
     startBtn.textContent = 'Lancer la Recherche';
     startBtn.classList.remove('danger');
+
+    // SUPPRIME LA ROUE SI ENCORE LÀ
+    const loadingLine = document.getElementById('loadingLine');
+    if (loadingLine) {
+        loadingLine.remove();
+    }
+
     updateThreadsLine();
     logConsole('Arrêt de la génération.', 'normal');
 }
-
 function displayResult(pubkey, privkey) {
     pubkeyEl.textContent = pubkey;
     privkeyEl.textContent = privkey;

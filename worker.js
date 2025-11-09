@@ -1,58 +1,50 @@
-importScripts('https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js');
+// worker.js — ROUE JUSQU'À PREMIER BATCH
+import init, { VanityWorker } from '/assets/vanity_wasm.js';
 
-const { Keypair } = solanaWeb3;
+let worker = null;
+let pending = 0;
+let last = 0;
+const BATCH = 1000;
 
-const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+self.onmessage = async (e) => {
+    try {
+        await init({ wasm: '/assets/vanity_wasm_bg.wasm' });
+        worker = new VanityWorker(e.data.vanity);
 
-function base58Encode(bytes) {
-  if (bytes.length === 0) return '';
-  const digits = [0];
-  for (let i = 0; i < bytes.length; ++i) {
-    let carry = bytes[i];
-    for (let j = 0; j < digits.length; ++j) {
-      carry += digits[j] << 8;
-      digits[j] = carry % 58;
-      carry = Math.floor(carry / 58);
+        // SIGNAL IMMÉDIAT
+        self.postMessage({ ready: true });
+
+        pending = 0;
+        last = performance.now();
+        loop();
+    } catch (err) {
+        self.postMessage({ error: err.message });
     }
-    while (carry > 0) {
-      digits.push(carry % 58);
-      carry = Math.floor(carry / 58);
-    }
-  }
-  let string = '';
-  for (let k = digits.length - 1; k >= 0; k--) string += alphabet[digits[k]];
-  let leadingZeros = 0;
-  for (let l = 0; l < bytes.length; l++) { if (bytes[l] === 0) leadingZeros++; else break; }
-  return alphabet[0].repeat(leadingZeros) + string;
-}
-
-let vanity = '';
-let attempts = 0;
-const batchSize = 5000;
-
-function runBatch() {
-  for (let i = 0; i < batchSize; i++) {
-    const keypair = Keypair.generate();
-    const pubkey = keypair.publicKey.toBase58();
-    attempts++;
-
-    if (pubkey.startsWith(vanity)) {
-      self.postMessage({
-        found: true,
-        pubkey,
-        privkey: base58Encode(keypair.secretKey),
-        secretKeyArray: Array.from(keypair.secretKey)
-      });
-      return;
-    }
-  }
-
-  self.postMessage({ attempts });
-  setTimeout(runBatch, 0);
-}
-
-self.onmessage = (e) => {
-  vanity = e.data.vanity;
-  attempts = 0;
-  runBatch();
 };
+
+function loop() {
+    if (!worker) return;
+
+    const res = worker.search(BATCH);
+
+    if (res.found) {
+        self.postMessage({
+            found: true,
+            pubkey: res.pubkey,
+            privkey: res.privkey,
+            secretKeyArray: res.secretKey,
+            delta: pending + BATCH
+        });
+        return;
+    }
+
+    pending += BATCH;
+    const now = performance.now();
+    if (now - last > 100 || pending > 500000) {
+        self.postMessage({ delta: pending });
+        pending = 0;
+        last = now;
+    }
+
+    setTimeout(loop, 0);
+}
