@@ -27,9 +27,9 @@
     <meta name="twitter:description" content="Génère ton adresse Solana personnalisée, 100% local.">
     <meta name="twitter:image" content="https://vanity.aprilox.fr/assets/og-image.png">
 
-    <!-- Favicon moderne (PNG + SVG + ICO) -->
+    <!-- Favicon moderne -->
     <link rel="icon" type="image/png" href="/assets/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" href="/assets/favicon.svg" /> <!-- SVG pour Chrome/Edge modernes -->
+    <link rel="icon" href="/assets/favicon.svg" />
     <link rel="shortcut icon" href="/assets/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
     <link rel="manifest" href="/assets/site.webmanifest" />
@@ -44,49 +44,63 @@
 </head>
 
 <body>
-    <h1>Solana Vanity Generator</h1>
-    <p class="subtitle">Génération locale • Multi-thread • Ultra-rapide</p>
+    <main>
+        <h1>Solana Vanity Generator</h1>
+        <p class="subtitle">Génération locale • Multi-thread • Ultra-rapide</p>
 
-    <div class="card">
-        <input type="text" id="vanity" placeholder="Préfixe (ex: pip, ABC)" maxlength="10" autocomplete="off">
-        <button id="startBtn">Lancer la Recherche</button>
-    </div>
+        <div class="card">
+            <input type="text" id="vanity" placeholder="Préfixe (ex: pip, ABC)" maxlength="10" autocomplete="off">
+            <button id="startBtn">Lancer la Recherche</button>
+        </div>
 
-    <div class="card settings">
-        <label>
-            <span>Threads CPU :</span>
-            <select id="threadCount"></select>
-        </label>
-    </div>
+        <div class="card settings">
+            <label>
+                <span>Threads CPU :</span>
+                <select id="threadCount"></select>
+            </label>
+        </div>
 
-    <!-- CONSOLE TERMINAL -->
-    <div id="console">
-        <div class="console-line">Prêt à démarrer...</div>
-        <div class="console-line thread-line" id="threadLine" style="display: none;"></div>
-    </div>
+        <!-- CONSOLE TERMINAL -->
+        <div id="console">
+            <div class="console-line">Prêt à démarrer...</div>
+            <div class="console-line thread-line" id="threadLine" style="display: none;"></div>
+        </div>
 
-    <div id="results" class="card">
-        <div class="field">
-            <label>Adresse publique:</label>
-            <div class="key-display" id="pubkey"></div>
+        <div id="results" class="card">
+            <div class="field">
+                <label>Adresse publique:</label>
+                <div class="key-display" id="pubkey"></div>
+                <div class="copy-row">
+                    <button class="copy-btn" data-target="pubkey">Copier</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Clé privée (base58):</label>
+                <div class="key-display" id="privkey"></div>
+                <div class="copy-row">
+                    <button class="copy-btn" data-target="privkey">Copier</button>
+                </div>
+            </div>
+
             <div class="copy-row">
-                <button class="copy-btn" data-target="pubkey">Copier</button>
+                <button id="downloadJson">wallet.json (Phantom)</button>
+                <button id="downloadBackup">vanity-backup.json</button>
             </div>
         </div>
+    </main>
 
-        <div class="field">
-            <label>Clé privée (base58):</label>
-            <div class="key-display" id="privkey"></div>
-            <div class="copy-row">
-                <button class="copy-btn" data-target="privkey">Copier</button>
-            </div>
+    <!-- FOOTER PRO -->
+    <footer>
+        <div class="footer-content">
+            <p>
+                <a href="mailto:contact@aprilox.fr" class="footer-link">contact@aprilox.fr</a> • 
+                <a href="https://github.com/Aprilox/solana-vanity-web" target="_blank" rel="noopener" class="footer-link">GitHub</a> • 
+                <a href="/terms.html" class="footer-link">Terms of Use</a>
+            </p>
+            <p class="footer-copy">© 2025 Aprilox – Interdit à la revente – Crédit obligatoire</p>
         </div>
-
-        <div class="copy-row">
-            <button id="downloadJson">wallet.json (Phantom)</button>
-            <button id="downloadBackup">vanity-backup.json</button>
-        </div>
-    </div>
+    </footer>
 
     <script src="app.js"></script>
     <script>

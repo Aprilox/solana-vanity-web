@@ -284,6 +284,38 @@ button.danger:hover {
     to { transform: rotate(360deg); }
 }
 
+/* FOOTER */
+footer {
+    margin-top: 48px;
+    padding: 24px 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+}
+
+.footer-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.footer-link {
+    color: var(--solana-green);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+
+.footer-copy {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
 @media (max-width: 500px) {
     body { padding: 16px; }
     h1 { font-size: 1.8rem; }
