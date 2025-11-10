@@ -1,4 +1,38 @@
-User-agent: *
+user-agent: *
+Content-Signal: search=yes,ai-input=no,ai-train=no
+Allow: /
+
+user-agent: Amazonbot
+Disallow: /
+
+user-agent: Applebot-Extended
+Disallow: /
+
+user-agent: Bytespider
+Disallow: /
+
+user-agent: CCBot
+Disallow: /
+
+user-agent: ClaudeBot
+Disallow: /
+
+user-agent: Google-Extended
+Disallow: /
+
+user-agent: GPTBot
+Disallow: /
+
+user-agent: meta-externalagent
+Disallow: /
+
+user-agent: anthropic-ai
+Disallow: /
+
+user-agent: PerplexityBot
+Disallow: /
+
+user-agent: *
 Allow: /
 
 Sitemap: https://vanity.aprilox.fr/sitemap.xml
