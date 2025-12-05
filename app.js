@@ -374,7 +374,11 @@ function setupEventListeners() {
     // Mode selector
     DOM.modeCpu.addEventListener('click', () => setMode('cpu'));
     DOM.modeGpu.addEventListener('click', () => {
-        if (state.gpuAvailable) setMode('gpu');
+        if (state.gpuAvailable) {
+            setMode('gpu');
+        } else {
+            showWebGPUHelp();
+        }
     });
     
     DOM.threadSelect.addEventListener('change', () => {
@@ -401,6 +405,48 @@ function setupEventListeners() {
     
     // Effacer résultats
     document.getElementById('clearResults')?.addEventListener('click', clearResults);
+}
+
+function showWebGPUHelp() {
+    const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
+    const isEdge = /Edg/.test(navigator.userAgent);
+    const isFirefox = /Firefox/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    
+    let message = '🚀 Comment activer WebGPU :\n\n';
+    
+    if (isChrome) {
+        message += '📍 Chrome :\n';
+        message += '1. Va dans chrome://flags\n';
+        message += '2. Cherche "WebGPU"\n';
+        message += '3. Active "Unsafe WebGPU Support"\n';
+        message += '4. Redémarre Chrome\n';
+    } else if (isEdge) {
+        message += '📍 Edge :\n';
+        message += '1. Va dans edge://flags\n';
+        message += '2. Cherche "WebGPU"\n';
+        message += '3. Active "Unsafe WebGPU Support"\n';
+        message += '4. Redémarre Edge\n';
+    } else if (isFirefox) {
+        message += '📍 Firefox :\n';
+        message += '1. Va dans about:config\n';
+        message += '2. Cherche "dom.webgpu.enabled"\n';
+        message += '3. Mets la valeur à "true"\n';
+        message += '4. Redémarre Firefox\n';
+    } else if (isSafari) {
+        message += '📍 Safari :\n';
+        message += '1. Safari → Réglages → Avancées\n';
+        message += '2. Active "Afficher le menu Développement"\n';
+        message += '3. Menu Développement → Fonctions expérimentales\n';
+        message += '4. Active "WebGPU"\n';
+    } else {
+        message += '📍 Navigateur non reconnu.\n';
+        message += 'Utilise Chrome 113+, Edge, ou Firefox Nightly.\n';
+    }
+    
+    message += '\n💡 Après activation, rafraîchis la page !';
+    
+    alert(message);
 }
 
 function setMode(mode) {
