@@ -1,38 +1,44 @@
-user-agent: *
-Content-Signal: search=yes,ai-input=no,ai-train=no
+# Solana Vanity Generator - robots.txt
+
+# Autoriser tous les robots de recherche
+User-agent: *
 Allow: /
+Disallow: /assets/*.wasm
+Disallow: /gpu-shaders/
 
-user-agent: Amazonbot
+# Bloquer les bots d'IA/Training
+User-agent: GPTBot
 Disallow: /
 
-user-agent: Applebot-Extended
+User-agent: ChatGPT-User
 Disallow: /
 
-user-agent: Bytespider
+User-agent: CCBot
 Disallow: /
 
-user-agent: CCBot
+User-agent: anthropic-ai
 Disallow: /
 
-user-agent: ClaudeBot
+User-agent: ClaudeBot
 Disallow: /
 
-user-agent: Google-Extended
+User-agent: Google-Extended
 Disallow: /
 
-user-agent: GPTBot
+User-agent: Amazonbot
 Disallow: /
 
-user-agent: meta-externalagent
+User-agent: Bytespider
 Disallow: /
 
-user-agent: anthropic-ai
+User-agent: PerplexityBot
 Disallow: /
 
-user-agent: PerplexityBot
+User-agent: meta-externalagent
 Disallow: /
 
-user-agent: *
-Allow: /
+User-agent: Applebot-Extended
+Disallow: /
 
+# Sitemap
 Sitemap: https://vanity.aprilox.fr/sitemap.xml

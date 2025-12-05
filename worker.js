@@ -1,50 +1,97 @@
-// worker.js — ROUE JUSQU'À PREMIER BATCH
-import init, { VanityWorker } from '/assets/vanity_wasm.js';
+/**
+ * Vanity Address Worker
+ * Optimisé pour performance maximale
+ */
+
+import init, { VanityWorker } from './assets/vanity_wasm.js';
 
 let worker = null;
-let pending = 0;
-let last = 0;
-const BATCH = 1000;
+let running = false;
+let totalAttempts = 0;
+let lastReportTime = 0;
 
-self.onmessage = async (e) => {
+// Taille du batch - plus grand = moins d'overhead, mais moins réactif
+// 5000-10000 est un bon compromis
+const BATCH_SIZE = 5000;
+
+// Interval de rapport (ms)
+const REPORT_INTERVAL = 150;
+
+// Reseed interval (pour meilleure entropie)
+const RESEED_INTERVAL = 1_000_000;
+
+self.onmessage = async (event) => {
+    const { type, vanity, searchMode } = event.data;
+    
+    if (type === 'stop') {
+        running = false;
+        return;
+    }
+    
+    // Démarrage
     try {
-        await init({ wasm: '/assets/vanity_wasm_bg.wasm' });
-        worker = new VanityWorker(e.data.vanity);
-
-        // SIGNAL IMMÉDIAT
-        self.postMessage({ ready: true });
-
-        pending = 0;
-        last = performance.now();
-        loop();
+        await init();
+        
+        // Créer le worker avec le mode approprié
+        if (searchMode === 'suffix') {
+            worker = VanityWorker.new_suffix(vanity);
+        } else {
+            worker = new VanityWorker(vanity);
+        }
+        
+        running = true;
+        totalAttempts = 0;
+        lastReportTime = performance.now();
+        
+        // Signal prêt
+        self.postMessage({ type: 'ready' });
+        
+        // Lance la boucle de recherche
+        runSearchLoop();
     } catch (err) {
-        self.postMessage({ error: err.message });
+        self.postMessage({ type: 'error', message: err.message });
     }
 };
 
-function loop() {
-    if (!worker) return;
-
-    const res = worker.search(BATCH);
-
-    if (res.found) {
+function runSearchLoop() {
+    if (!running || !worker) return;
+    
+    const result = worker.search_batch(BATCH_SIZE);
+    
+    if (result.found) {
+        // Trouvé !
         self.postMessage({
-            found: true,
-            pubkey: res.pubkey,
-            privkey: res.privkey,
-            secretKeyArray: res.secretKey,
-            delta: pending + BATCH
+            type: 'found',
+            pubkey: result.pubkey,
+            privkey: result.privkey,
+            secretKey: result.secretKey,
+            attempts: totalAttempts + result.attempts
         });
+        running = false;
         return;
     }
-
-    pending += BATCH;
-    const now = performance.now();
-    if (now - last > 100 || pending > 500000) {
-        self.postMessage({ delta: pending });
-        pending = 0;
-        last = now;
+    
+    // Mise à jour du compteur
+    totalAttempts += result.attempts;
+    
+    // Reseed périodique pour meilleure entropie
+    if (totalAttempts % RESEED_INTERVAL < BATCH_SIZE) {
+        worker.reseed();
     }
-
-    setTimeout(loop, 0);
+    
+    // Rapport périodique
+    const now = performance.now();
+    if (now - lastReportTime >= REPORT_INTERVAL) {
+        self.postMessage({
+            type: 'progress',
+            attempts: totalAttempts
+        });
+        totalAttempts = 0; // Reset après rapport
+        lastReportTime = now;
+    }
+    
+    // Continue immédiatement (pas de setTimeout!)
+    // On utilise queueMicrotask pour éviter de bloquer complètement le thread
+    // mais c'est beaucoup plus rapide que setTimeout
+    queueMicrotask(runSearchLoop);
 }

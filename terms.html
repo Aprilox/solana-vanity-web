@@ -14,8 +14,13 @@
     <meta property="og:url" content="https://vanity.aprilox.fr/terms.html">
     <meta property="og:image" content="https://vanity.aprilox.fr/assets/og-pic.png">
     <meta property="og:site_name" content="Solana Vanity Generator – Terms of Use">
+    
     <!-- Twitter Card -->
     <meta name="twitter:image" content="https://vanity.aprilox.fr/assets/og-pic.png">
+
+    <!-- SEO -->
+    <link rel="canonical" href="https://vanity.aprilox.fr/terms.html">
+    <meta name="robots" content="noindex, follow">
 
     <!-- Favicon moderne -->
     <link rel="icon" type="image/png" href="/assets/favicon-96x96.png" sizes="96x96" />
@@ -27,20 +32,58 @@
 </head>
 
 <body>
-    <div style="max-width: 700px; margin: 40px auto; padding: 24px; color: #fff;">
-        <h1 style="text-align: center; margin-bottom: 24px;">Terms of Use</h1>
-        <p><strong>Solana Vanity Generator</strong> est un outil <strong>100% client-side</strong>. Aucune donnée n'est
-            envoyée.</p>
-        <ul>
-            <li>Vous êtes <strong>responsable de la sécurité</strong> de vos clés privées.</li>
-            <li>Ne partagez <strong>jamais</strong> votre clé privée.</li>
-            <li>Interdit à la revente ou à l'usage commercial sans autorisation.</li>
-            <li>Crédit obligatoire : <code>by Aprilox</code></li>
-        </ul>
-        <p style="text-align: center; margin-top: 32px;">
-            <a href="/" style="color: var(--solana-green);">← Retour</a>
+    <main class="terms-page">
+        <a href="/" class="back-link">← Retour au générateur</a>
+        
+        <h1>Terms of Use</h1>
+        <p class="subtitle">Conditions d'utilisation</p>
+
+        <div class="terms-card">
+            <div class="terms-section">
+                <div class="section-icon">🔒</div>
+                <h2>Sécurité & Confidentialité</h2>
+                <p><strong>Solana Vanity Generator</strong> est un outil <strong>100% client-side</strong>.</p>
+                <ul>
+                    <li>Aucune donnée n'est envoyée à un serveur</li>
+                    <li>Toutes les clés sont générées localement dans votre navigateur</li>
+                    <li>Aucun tracking, aucune analytics</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <div class="section-icon">⚠️</div>
+                <h2>Votre Responsabilité</h2>
+                <ul>
+                    <li>Vous êtes <strong>seul responsable</strong> de la sécurité de vos clés privées</li>
+                    <li>Ne partagez <strong>jamais</strong> votre clé privée avec quiconque</li>
+                    <li>Sauvegardez vos clés dans un endroit sécurisé</li>
+                    <li>L'auteur ne peut être tenu responsable de toute perte de fonds</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <div class="section-icon">📜</div>
+                <h2>Licence & Usage</h2>
+                <ul>
+                    <li>Usage personnel <strong>gratuit</strong> et illimité</li>
+                    <li>Interdit à la revente ou à l'usage commercial sans autorisation</li>
+                    <li>Crédit obligatoire : <code>by Aprilox</code></li>
+                    <li>Code source disponible sur <a href="https://github.com/Aprilox/solana-vanity-web" target="_blank" rel="noopener">GitHub</a></li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <div class="section-icon">📧</div>
+                <h2>Contact</h2>
+                <p>Pour toute question ou demande commerciale :</p>
+                <a href="mailto:contact@aprilox.fr" class="contact-email">contact@aprilox.fr</a>
+            </div>
+        </div>
+
+        <p class="terms-footer">
+            Dernière mise à jour : Décembre 2025
         </p>
-    </div>
+    </main>
 </body>
 
 </html>

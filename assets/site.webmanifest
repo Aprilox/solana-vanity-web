@@ -1,21 +1,32 @@
 {
   "name": "Solana Vanity Generator",
-  "short_name": "SVG",
+  "short_name": "Vanity",
+  "description": "Génère une adresse Solana vanity en 1 clic. 100% local, ultra-rapide.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#14F195",
+  "background_color": "#0a0a0a",
   "icons": [
     {
       "src": "/assets/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable any"
     },
     {
       "src": "/assets/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "categories": ["utilities", "finance"],
+  "lang": "fr"
 }

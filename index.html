@@ -34,6 +34,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
     <link rel="manifest" href="/assets/site.webmanifest" />
     <meta name="apple-mobile-web-app-title" content="Solana Vanity" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#14F195" />
 
     <!-- Canonical -->
     <link rel="canonical" href="https://vanity.aprilox.fr/">
@@ -49,15 +53,55 @@
         <p class="subtitle">Génération locale • Multi-thread • Ultra-rapide</p>
 
         <div class="card">
-            <input type="text" id="vanity" placeholder="Préfixe (ex: pip, ABC)" maxlength="10" autocomplete="off">
+            <div class="input-row">
+                <select id="searchMode" class="search-mode-select">
+                    <option value="prefix">Préfixe</option>
+                    <option value="suffix">Suffixe</option>
+                </select>
+                <input type="text" id="vanity" placeholder="ex: pip, ABC" maxlength="10" autocomplete="off">
+            </div>
             <button id="startBtn">Lancer la Recherche</button>
         </div>
 
         <div class="card settings">
-            <label>
-                <span>Threads CPU :</span>
-                <select id="threadCount"></select>
-            </label>
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active" data-mode="cpu" id="modeCpu">
+                    <span class="mode-icon">⚡</span>
+                    <span class="mode-label">CPU</span>
+                </button>
+                <button type="button" class="mode-btn" data-mode="gpu" id="modeGpu">
+                    <span class="mode-icon">🚀</span>
+                    <span class="mode-label">WebGPU</span>
+                </button>
+            </div>
+            
+            <div id="cpuSettings" class="mode-settings">
+                <label>
+                    <span>Threads CPU :</span>
+                    <select id="threadCount"></select>
+                </label>
+            </div>
+            
+            <div id="gpuSettings" class="mode-settings" style="display: none;">
+                <label>
+                    <span>GPU :</span>
+                    <select id="gpuSelect">
+                        <option value="default">Détection automatique...</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Batch :</span>
+                    <select id="gpuBatchSelect">
+                        <option value="128">32K - Intel/AMD intégré</option>
+                        <option value="256">64K - GTX 1050/1650, RX 550</option>
+                        <option value="512">128K - GTX 1660/1070, RX 580</option>
+                        <option value="1024" selected>256K - RTX 3060/3070, RX 6700</option>
+                        <option value="2048">512K - RTX 3080/4070, RX 6800</option>
+                        <option value="4096">1M - RTX 3090/4080/4090</option>
+                    </select>
+                </label>
+                <p class="gpu-info" id="gpuInfo"></p>
+            </div>
         </div>
 
         <!-- CONSOLE TERMINAL -->
@@ -67,6 +111,11 @@
         </div>
 
         <div id="results" class="card">
+            <div class="results-header">
+                <span class="security-badge">🔒 100% Local</span>
+                <button id="clearResults" class="clear-btn">✕ Effacer</button>
+            </div>
+            
             <div class="field">
                 <label>Adresse publique:</label>
                 <div class="key-display" id="pubkey"></div>
@@ -88,6 +137,15 @@
                 <button id="downloadBackup">vanity-backup.json</button>
             </div>
         </div>
+        
+        <!-- HISTORIQUE -->
+        <div id="history" class="card" style="display: none;">
+            <div class="history-header">
+                <h3>📜 Historique</h3>
+                <button id="clearHistory" class="clear-btn">Effacer</button>
+            </div>
+            <div id="historyList"></div>
+        </div>
     </main>
 
     <!-- FOOTER PRO -->
@@ -108,7 +166,6 @@
             if (window.isGenerating) {
                 e.preventDefault();
                 e.returnValue = '';
-                return 'Génération en cours. Voulez-vous vraiment quitter ?';
             }
         });
     </script>
