@@ -28,6 +28,147 @@ body {
     line-height: 1.6;
 }
 
+/* HEADER */
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.logo-sol {
+    color: var(--solana-green);
+}
+
+.logo-vanity {
+    color: var(--text-primary);
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.download-btn {
+    background: var(--solana-green);
+    color: #000;
+}
+
+.download-btn:hover {
+    background: #11D17A;
+    transform: translateY(-1px);
+}
+
+/* Desktop Promo Banner */
+.desktop-promo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(20, 241, 149, 0.08) 0%, rgba(153, 69, 255, 0.08) 100%);
+    border: 1px solid rgba(20, 241, 149, 0.2);
+    border-radius: 12px;
+}
+
+.promo-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.promo-icon {
+    font-size: 1.5rem;
+}
+
+.promo-text strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.promo-text span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.promo-btn {
+    padding: 10px 20px;
+    background: var(--solana-green);
+    color: #000;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.promo-btn:hover {
+    background: #11D17A;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 500px) {
+    .site-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .header-nav {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .desktop-promo {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .promo-content {
+        flex-direction: column;
+    }
+}
+
 h1 {
     text-align: center;
     font-weight: 700;
@@ -737,4 +878,455 @@ footer {
     .copy-row button { width: 100%; }
     #console { height: 160px; font-size: 0.85rem; }
     .console-wrapper { margin: 12px 0; }
+}
+
+/* ================================
+   DESKTOP APP DOWNLOAD SECTION
+   ================================ */
+
+.desktop-section {
+    margin-top: 40px;
+    padding: 32px;
+    background: linear-gradient(135deg, #1A1A1A 0%, #0D0D0D 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.desktop-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #14F195, #00D1FF, #9945FF);
+}
+
+.desktop-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.desktop-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.desktop-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Speed Comparison */
+.speed-comparison {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.speed-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid transparent;
+    min-width: 100px;
+}
+
+.speed-item.web {
+    border-color: #555;
+    opacity: 0.7;
+}
+
+.speed-item.native {
+    border-color: var(--solana-green);
+    background: rgba(20, 241, 149, 0.05);
+}
+
+.speed-item.cuda {
+    border-color: #9945FF;
+    background: rgba(153, 69, 255, 0.08);
+    box-shadow: 0 0 20px rgba(153, 69, 255, 0.15);
+}
+
+.speed-icon {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+
+.speed-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.speed-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.speed-item.cuda .speed-value {
+    color: #9945FF;
+}
+
+.speed-item.native .speed-value {
+    color: var(--solana-green);
+}
+
+.speed-arrow {
+    color: #555;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Trust Badges */
+.trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(20, 241, 149, 0.08);
+    border: 1px solid rgba(20, 241, 149, 0.2);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--solana-green);
+    font-weight: 500;
+}
+
+.badge-icon {
+    font-size: 1rem;
+}
+
+/* Download Cards */
+.download-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.download-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.download-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.download-card.windows:hover {
+    border-color: #00A4EF;
+    box-shadow: 0 12px 40px rgba(0, 164, 239, 0.15);
+}
+
+.download-card.linux:hover {
+    border-color: #FCC624;
+    box-shadow: 0 12px 40px rgba(252, 198, 36, 0.15);
+}
+
+.os-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+}
+
+.os-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.download-card.windows .os-icon {
+    color: #00A4EF;
+}
+
+.download-card.linux .os-icon {
+    color: #FCC624;
+}
+
+.download-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.os-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.download-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.download-btn.primary {
+    background: var(--solana-green);
+    color: #000;
+}
+
+.download-btn.primary:hover {
+    background: #11D17A;
+    transform: translateY(-1px);
+}
+
+.download-btn.cuda {
+    background: linear-gradient(135deg, #9945FF 0%, #7B2FE0 100%);
+    color: #fff;
+}
+
+.download-btn.cuda:hover {
+    background: linear-gradient(135deg, #A855FF 0%, #8B3FF0 100%);
+    transform: translateY(-1px);
+}
+
+/* Source Code Section */
+.source-code-section {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.source-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.source-icon {
+    font-size: 1.8rem;
+}
+
+.source-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.source-header p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.source-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.source-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.source-btn.github {
+    background: #24292e;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.source-btn.github:hover {
+    background: #2f363d;
+    border-color: #555;
+}
+
+.source-btn.docs {
+    background: transparent;
+    color: var(--solana-green);
+    border: 1px solid var(--solana-green);
+}
+
+.source-btn.docs:hover {
+    background: rgba(20, 241, 149, 0.1);
+}
+
+.verification-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.verify-icon {
+    color: var(--solana-green);
+    font-weight: bold;
+}
+
+/* Features Details */
+.features-details {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.features-details summary {
+    padding: 16px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-primary);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.features-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.features-details summary::after {
+    content: '▼';
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s;
+}
+
+.features-details[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.features-details summary:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    padding: 0 20px 20px;
+}
+
+.feature-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.feature-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.feature-item strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.feature-item p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Mobile Responsive - Desktop Section */
+@media (max-width: 600px) {
+    .desktop-section {
+        padding: 24px 16px;
+        margin-top: 32px;
+    }
+
+    .desktop-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .speed-comparison {
+        gap: 8px;
+    }
+
+    .speed-item {
+        min-width: 80px;
+        padding: 10px 12px;
+    }
+
+    .speed-arrow {
+        font-size: 1rem;
+    }
+
+    .trust-badges {
+        gap: 10px;
+    }
+
+    .trust-badge {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .download-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .source-actions {
+        flex-direction: column;
+    }
+
+    .source-btn {
+        justify-content: center;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
 }

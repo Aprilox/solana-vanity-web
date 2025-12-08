@@ -6,7 +6,7 @@
 > 🚀 **WebGPU** jusqu'à 700K+ clés/s | ⚡ **CPU WASM** multi-thread  
 > 🔒 **100% local** – Aucune donnée envoyée  
 
-🌐 **[vanity.aprilox.fr](https://vanity.aprilox.fr)**
+🌐 **[vanity.aprilox.fr](https://vanity.aprilox.fr)** | 📥 **[Télécharger l'App Desktop](https://vanity.aprilox.fr/download.html)**
 
 ---
 
@@ -25,7 +25,20 @@
 
 ---
 
-## 🚀 Performance
+## 🖥️ Application Desktop
+
+Pour encore plus de vitesse, téléchargez l'application native :
+
+| Version | Plateforme | Vitesse |
+|---------|------------|---------|
+| 🎨 **GUI** | Windows | ~800K/s (CPU) / ~1.8M/s (CUDA) |
+| 🖥️ **CLI** | Windows, Linux | ~800K/s (CPU) / ~1.8M/s (CUDA) |
+
+👉 **[Télécharger](https://vanity.aprilox.fr/download.html)** | **[GitHub App](https://github.com/Aprilox/solana-vanity-app)**
+
+---
+
+## 🚀 Performance Web
 
 | Mode | Vitesse | GPU/CPU |
 |------|---------|---------|
@@ -39,10 +52,12 @@
 ## 📖 Utilisation
 
 1. **Choisis** Préfixe ou Suffixe
-2. **Entre** ton pattern (ex: `Sol`, `ABC`)
+2. **Entre** ton pattern (ex: `Apo`, `ABC`)
 3. **Sélectionne** CPU ou WebGPU
 4. **Lance** la recherche
 5. **Copie** ou télécharge le résultat
+
+> ⚠️ **Base58** : Évitez `0`, `O`, `I`, `l` (exclus de l'encodage)
 
 ---
 
@@ -72,6 +87,7 @@ npx serve .
 
 ```
 ├── index.html          # Page principale
+├── download.html       # Page téléchargement
 ├── app.js              # Logique application
 ├── style.css           # Styles
 ├── worker.js           # Worker CPU (WASM)

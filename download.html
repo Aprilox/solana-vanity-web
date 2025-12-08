@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO -->
+    <title>Télécharger Solana Vanity App - GUI & CLI</title>
+    <meta name="description" content="Téléchargez l'application Solana Vanity Generator. GUI Windows, CLI Linux/Windows. CPU + GPU CUDA. 100% gratuit et open-source.">
+    <meta name="robots" content="index, follow">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" href="/assets/favicon.svg" />
+    <link rel="shortcut icon" href="/assets/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+    <meta name="theme-color" content="#14F195" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <style>
+        body {
+            max-width: 900px;
+        }
+        
+        .download-page {
+            padding-top: 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        
+        .page-header .subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: rgba(20, 241, 149, 0.15);
+            color: var(--solana-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-title h2 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .section-title .icon {
+            font-size: 1.6rem;
+        }
+        
+        .recommended-badge {
+            background: var(--solana-green);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        /* Download Boxes */
+        .download-section {
+            margin-bottom: 32px;
+        }
+        
+        .download-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .download-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .download-box.gui {
+            border-color: var(--solana-green);
+            background: linear-gradient(135deg, rgba(20, 241, 149, 0.05) 0%, var(--card-bg) 100%);
+        }
+        
+        .download-box.windows {
+            border-left: 4px solid #00A4EF;
+        }
+        
+        .download-box.linux {
+            border-left: 4px solid #FCC624;
+        }
+        
+        .platform-icon {
+            font-size: 2.5rem;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .download-info {
+            flex: 1;
+        }
+        
+        .download-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+        
+        .download-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .download-info .tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .tag.cpu {
+            color: #4FC3F7;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+        }
+        
+        .tag.cuda {
+            color: #9945FF;
+            border: 1px solid rgba(153, 69, 255, 0.3);
+        }
+        
+        .download-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .btn-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-download.primary {
+            background: var(--solana-green);
+            color: #000;
+        }
+        
+        .btn-download.primary:hover {
+            background: #11D17A;
+            transform: translateY(-1px);
+        }
+        
+        .btn-download.secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-download.secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #555;
+        }
+        
+        /* Requirements */
+        .requirements {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 32px;
+        }
+        
+        .requirements h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .req-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .req-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .req-icon {
+            font-size: 1.2rem;
+            color: var(--solana-green);
+        }
+        
+        .req-item strong {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        
+        .req-item span {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Source Code */
+        .source-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .source-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        .source-section p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        
+        .source-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .source-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .source-link.github {
+            background: #24292e;
+            color: #fff;
+            border: 1px solid #444;
+        }
+        
+        .source-link.github:hover {
+            background: #2f363d;
+        }
+        
+        .source-link.web {
+            background: transparent;
+            color: var(--solana-green);
+            border: 1px solid var(--solana-green);
+        }
+        
+        .source-link.web:hover {
+            background: rgba(20, 241, 149, 0.1);
+        }
+        
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--solana-green);
+        }
+        
+        /* Speed Comparison */
+        .speed-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        
+        .speed-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid transparent;
+            min-width: 100px;
+        }
+        
+        .speed-item.web {
+            border-color: #555;
+            opacity: 0.6;
+        }
+        
+        .speed-item.cpu {
+            border-color: var(--solana-green);
+            background: rgba(20, 241, 149, 0.08);
+        }
+        
+        .speed-item.cuda {
+            border-color: #9945FF;
+            background: rgba(153, 69, 255, 0.08);
+        }
+        
+        .speed-icon {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+        
+        .speed-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .speed-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .speed-item.cpu .speed-value {
+            color: var(--solana-green);
+        }
+        
+        .speed-item.cuda .speed-value {
+            color: #9945FF;
+        }
+        
+        .speed-arrow {
+            color: #555;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        
+        /* Mobile */
+        @media (max-width: 600px) {
+            .download-box {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .download-info .tags {
+                justify-content: center;
+            }
+            
+            .download-actions {
+                width: 100%;
+            }
+            
+            .btn-download {
+                width: 100%;
+            }
+            
+            .source-links {
+                flex-direction: column;
+            }
+            
+            .speed-comparison {
+                gap: 8px;
+                padding: 16px;
+            }
+            
+            .speed-item {
+                min-width: 70px;
+                padding: 12px 14px;
+            }
+            
+            .speed-arrow {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="site-header">
+        <a href="index.html" class="logo">
+            <span class="logo-sol">SOL</span><span class="logo-vanity">VANITY</span>
+        </a>
+        <nav class="header-nav">
+            <a href="https://github.com/Aprilox/solana-vanity-app" target="_blank" rel="noopener" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                GitHub
+            </a>
+        </nav>
+    </header>
+
+    <main class="download-page">
+        <a href="index.html" class="back-link">← Retour au générateur</a>
+        
+        <div class="page-header">
+            <h1>Télécharger</h1>
+            <p class="subtitle">Application desktop ultra-rapide • CPU + GPU CUDA</p>
+            <span class="version-badge" id="versionBadge">Chargement...</span>
+        </div>
+
+        <!-- Speed Comparison -->
+        <div class="speed-comparison">
+            <div class="speed-item web">
+                <span class="speed-icon">🌐</span>
+                <span class="speed-label">Web</span>
+                <span class="speed-value">~500K/s</span>
+            </div>
+            <span class="speed-arrow">→</span>
+            <div class="speed-item cpu">
+                <span class="speed-icon">⚡</span>
+                <span class="speed-label">CPU App</span>
+                <span class="speed-value">~800K/s</span>
+            </div>
+            <span class="speed-arrow">→</span>
+            <div class="speed-item cuda">
+                <span class="speed-icon">🚀</span>
+                <span class="speed-label">CUDA</span>
+                <span class="speed-value">~1.8M/s</span>
+            </div>
+        </div>
+
+        <!-- GUI Section -->
+        <section class="download-section">
+            <div class="section-title">
+                <span class="icon">🎨</span>
+                <h2>GUI - Interface Graphique</h2>
+                <span class="recommended-badge">Recommandé</span>
+            </div>
+            
+            <div class="download-box gui windows">
+                <div class="platform-icon">🪟</div>
+                <div class="download-info">
+                    <h3>Windows</h3>
+                    <p>Application avec interface moderne et intuitive</p>
+                    <div class="tags">
+                        <span class="tag cpu">⚡ CPU Multi-thread</span>
+                        <span class="tag cuda">🚀 CUDA GPU</span>
+                    </div>
+                </div>
+                <div class="download-actions">
+                    <a href="https://github.com/Aprilox/solana-vanity-app/releases/latest/download/solana-vanity-gui-windows-x64.zip" class="btn-download primary">
+                        ⬇️ Télécharger
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLI Section -->
+        <section class="download-section">
+            <div class="section-title">
+                <span class="icon">🖥️</span>
+                <h2>CLI - Ligne de Commande</h2>
+            </div>
+            
+            <div class="download-box windows">
+                <div class="platform-icon">🪟</div>
+                <div class="download-info">
+                    <h3>Windows</h3>
+                    <p>Exécutable en ligne de commande</p>
+                    <div class="tags">
+                        <span class="tag cpu">⚡ CPU</span>
+                        <span class="tag cuda">🚀 CUDA</span>
+                    </div>
+                </div>
+                <div class="download-actions">
+                    <a href="https://github.com/Aprilox/solana-vanity-app/releases/latest/download/solana-vanity-cli-windows-x64.zip" class="btn-download primary">
+                        ⬇️ Télécharger
+                    </a>
+                </div>
+            </div>
+            
+            <div class="download-box linux">
+                <div class="platform-icon">🐧</div>
+                <div class="download-info">
+                    <h3>Linux</h3>
+                    <p>Binaire natif x64</p>
+                    <div class="tags">
+                        <span class="tag cpu">⚡ CPU</span>
+                        <span class="tag cuda">🚀 CUDA</span>
+                    </div>
+                </div>
+                <div class="download-actions">
+                    <a href="https://github.com/Aprilox/solana-vanity-app/releases/latest/download/solana-vanity-cli-linux-x64.tar.gz" class="btn-download primary">
+                        ⬇️ Télécharger
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Requirements -->
+        <div class="requirements">
+            <h3>📋 Configuration requise</h3>
+            <div class="req-grid">
+                <div class="req-item">
+                    <span class="req-icon">✓</span>
+                    <div>
+                        <strong>Mode CPU</strong>
+                        <span>Aucune dépendance</span>
+                    </div>
+                </div>
+                <div class="req-item">
+                    <span class="req-icon">✓</span>
+                    <div>
+                        <strong>Mode GPU</strong>
+                        <span>NVIDIA + Drivers CUDA</span>
+                    </div>
+                </div>
+                <div class="req-item">
+                    <span class="req-icon">✓</span>
+                    <div>
+                        <strong>Windows</strong>
+                        <span>Windows 10/11 x64</span>
+                    </div>
+                </div>
+                <div class="req-item">
+                    <span class="req-icon">✓</span>
+                    <div>
+                        <strong>Linux</strong>
+                        <span>Ubuntu 20.04+ / Debian 11+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Source Code -->
+        <div class="source-section">
+            <h3>🔓 100% Open Source</h3>
+            <p>Auditez le code, compilez vous-même, vérifiez les checksums</p>
+            <div class="source-links">
+                <a href="https://github.com/Aprilox/solana-vanity-app" target="_blank" class="source-link github">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Code Source
+                </a>
+                <a href="index.html" class="source-link web">
+                    🌐 Version Web
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <p>
+                <a href="mailto:contact@aprilox.fr" class="footer-link">contact@aprilox.fr</a> • 
+                <a href="https://github.com/Aprilox/solana-vanity-app" target="_blank" rel="noopener" class="footer-link">GitHub</a> • 
+                <a href="terms.html" class="footer-link">Terms of Use</a>
+            </p>
+            <p class="footer-copy">© 2025 Aprilox</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fetch latest version from GitHub
+        async function fetchLatestVersion() {
+            const badge = document.getElementById('versionBadge');
+            try {
+                const response = await fetch('https://api.github.com/repos/Aprilox/solana-vanity-app/releases/latest');
+                if (response.ok) {
+                    const data = await response.json();
+                    badge.textContent = data.tag_name || 'v1.4.0';
+                } else {
+                    badge.textContent = 'v1.4.0'; // Fallback
+                }
+            } catch (e) {
+                badge.textContent = 'v1.4.0'; // Fallback on error
+            }
+        }
+        
+        fetchLatestVersion();
+    </script>
+</body>
+
+</html>
+
