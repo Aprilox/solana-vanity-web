@@ -6,7 +6,7 @@
 > 🚀 **WebGPU** jusqu'à 700K+ clés/s | ⚡ **CPU WASM** multi-thread  
 > 🔒 **100% local** – Aucune donnée envoyée  
 
-🌐 **[vanity.aprilox.fr](https://vanity.aprilox.fr)** | 📥 **[Télécharger l'App Desktop](https://vanity.aprilox.fr/download.html)**
+🌐 **[vanity.aprilox.fr](https://vanity.aprilox.fr)** | 📥 **[Télécharger l'App Desktop](https://vanity.aprilox.fr/download)**
 
 ---
 
@@ -34,7 +34,7 @@ Pour encore plus de vitesse, téléchargez l'application native :
 | 🎨 **GUI** | Windows | ~800K/s (CPU) / ~1.8M/s (CUDA) |
 | 🖥️ **CLI** | Windows, Linux | ~800K/s (CPU) / ~1.8M/s (CUDA) |
 
-👉 **[Télécharger](https://vanity.aprilox.fr/download.html)** | **[GitHub App](https://github.com/Aprilox/solana-vanity-app)**
+👉 **[Télécharger](https://vanity.aprilox.fr/download)** | **[GitHub App](https://github.com/Aprilox/solana-vanity-app)**
 
 ---
 
